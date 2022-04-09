@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import jwt from 'express-jwt';
 import { expressJwtSecret } from 'jwks-rsa';
 import { promisify } from 'node:util';
-import { CognitoJwtVerifier } from 'aws-jwt-verify';
+// import { CognitoJwtVerifier } from 'aws-jwt-verify'; // AWS Cognito
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -25,14 +25,15 @@ export class AuthorizationGuard implements CanActivate {
     const req = httpContext.getRequest();
     const res = httpContext.getResponse();
 
-    // Verifier that expects valid access tokens:
+    // AWS Cognito
+    /*
     const verifier = CognitoJwtVerifier.create({
       userPoolId: process.env.COGNITO_USERPOOLID,
       tokenUse: 'id',
       clientId: process.env.COGNITO_CLIENTID,
     });
 
-    const idToken = req.headers.authorization.split(' ')[1];
+    const idToken = req.headers.authorization?.split(' ')[1];
 
     try {
       const payload = await verifier.verify(idToken);
@@ -40,6 +41,7 @@ export class AuthorizationGuard implements CanActivate {
     } catch {
       console.log('Token not valid!');
     }
+    */
 
     const checkJWT = promisify(
       jwt({
