@@ -13,9 +13,10 @@ var authenticationData = {
 }
 
 var authenticationDetails = new AuthenticationDetails(authenticationData)
+
 var poolData = {
-  UserPoolId: process.env.NEXT_PUBLIC_UserPoolId,
-  ClientId: process.env.NEXT_PUBLIC_ClientId,
+  UserPoolId: 'us-east-1_YY9GKypnw',
+  ClientId: '7dhne5b8u5evajq5an99rp83o5',
 }
 
 var userPool = new CognitoUserPool(poolData)
@@ -33,38 +34,31 @@ cognitoUser.authenticateUser(authenticationDetails, {
     //POTENTIAL: Region needs to be set if not already set previously elsewhere.
     AWS.config.region = 'us-east-1'
 
-    const cognitoIdp = `cognito-idp.us-east-1.amazonaws.com/${process.env.NEXT_PUBLIC_UserPoolId}`
-
+    /*
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: process.env.NEXT_PUBLIC_IdentityPoolId, // your identity pool id here
+      IdentityPoolId: 'us-east-1:26b06165-2744-42d8-8b9c-f5078d56795c', // your identity pool id here
       Logins: {
         // Change the key below according to the specific region your user pool is in.
-        cognitoIdp: result.getIdToken().getJwtToken(),
+        'cognito-idp.us-east-1.amazonaws.com/us-east-1_YY9GKypnw': result
+          .getIdToken()
+          .getJwtToken(),
       },
     })
-    //refreshes credentials using AWS.CognitoIdentity.getCredentialsForIdentity()
+    */
+
+    // Initialize the Amazon Cognito credentials provider
+    /*
+    AWS.config.region = 'us-east-1' // Region
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: 'us-east-1:d045ee27-686e-455d-803b-a7a1705cb805',
+    })
+    */
+
     AWS.config.credentials.refresh((error) => {
       if (error) {
         console.error(error)
       } else {
-        // Instantiate aws sdk service objects now that the credentials have been updated.
-        // example: var s3 = new AWS.S3();
         console.log('Successfully logged!')
-
-        cognitoUser.getUserAttributes(function (err, result) {
-          if (err) {
-            console.log(err.message)
-            return
-          }
-          for (let i = 0; i < result.length; i++) {
-            console.log(
-              'attribute ' +
-                result[i].getName() +
-                ' has value ' +
-                result[i].getValue()
-            )
-          }
-        })
 
         cognitoUser.getSession((err, session) => {
           if (err) {
