@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import slugify from 'slugify';
 import { PrismaService } from '../database/prisma/prisma.service';
 
+interface CreateCourseParams {
+  title: string;
+}
 @Injectable()
 export class CoursesService {
   constructor(private prisma: PrismaService) {}
@@ -15,5 +19,21 @@ export class CoursesService {
         id,
       },
     });
+  }
+
+  async createCourse({ title }: CreateCourseParams) {
+    const slug = slugify(title, { lower: true });
+
+    const courseAlreadyExists = await this.prisma.course.findUnique({
+      where: { slug },
+    });
+
+    if (courseAlreadyExists)
+      throw new HttpException(
+        'Forbidden - course slug already exists',
+        HttpStatus.FORBIDDEN,
+      );
+
+    return this.prisma.course.create({ data: { title, slug } });
   }
 }
