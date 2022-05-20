@@ -65,7 +65,6 @@ cognitoUser.authenticateUser(authenticationDetails, {
             console.log(err)
             return
           }
-
           console.log('session validity: ' + session.isValid())
           console.log(JSON.stringify(session.getIdToken(), null, 2))
         })
