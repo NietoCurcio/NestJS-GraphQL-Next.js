@@ -1,5 +1,15 @@
 query Me {
   me {
     authUserId
+
+    enrollments {
+      id
+      createdAt
+
+      course {
+        title
+        slug
+      }
+    }
   }
 }
