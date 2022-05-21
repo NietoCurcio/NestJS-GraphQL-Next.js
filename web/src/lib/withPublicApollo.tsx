@@ -15,7 +15,7 @@ export function getApolloClient(
   ssrCache?: NormalizedCacheObject
 ) {
   const httpLink = createHttpLink({
-    uri: 'http://localhost:3000/api',
+    uri: 'http://localhost:3332/graphql',
     fetch,
   })
 
@@ -28,8 +28,7 @@ export function getApolloClient(
 }
 
 // HOC - High Order Component
-// ApolloProvider is used only per page, and not around the whole app in _app.tsx
-export const withApollo = (Component: NextPage) => {
+export const withPublicApollo = (Component: NextPage) => {
   return function Provider(props: any) {
     return (
       <ApolloProvider client={getApolloClient(undefined, props.apolloState)}>

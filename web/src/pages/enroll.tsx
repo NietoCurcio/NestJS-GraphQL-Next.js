@@ -3,14 +3,33 @@ import { CalendarIcon } from '@heroicons/react/solid'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { GetStaticProps } from 'next'
-import { GetProductsQuery } from '../graphql/generated/graphql'
+import {
+  GetProductsQuery,
+  useCreatePurchaseMutation,
+} from '../graphql/generated/graphql'
 import { withApollo } from '../lib/withApollo'
+import {
+  getServerPageGetProducts,
+  ssrGetProducts,
+} from '../graphql/generated/pagePublic'
 
 interface EnrollProps {
   data: GetProductsQuery
 }
 
 function Enroll({ data }: EnrollProps) {
+  const [createPurchase, { loading, error }] = useCreatePurchaseMutation()
+
+  async function handlePurchaseProduct(productId: string) {
+    await createPurchase({
+      variables: {
+        productId,
+      },
+    })
+
+    alert('Compra realizada com sucesso!')
+  }
+
   return (
     <>
       <Head>
@@ -49,7 +68,10 @@ function Enroll({ data }: EnrollProps) {
                         </div>
                       </div>
                       <div className="ml-5 flex-shrink-0">
-                        <button className="px-2 py-1 border border-transparent text-base font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700">
+                        <button
+                          onClick={() => handlePurchaseProduct(product.id)}
+                          className="px-2 py-1 border border-transparent text-base font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700"
+                        >
                           Realizar inscrição
                         </button>
                       </div>
@@ -67,9 +89,12 @@ function Enroll({ data }: EnrollProps) {
 }
 
 export const getStaticProps: GetStaticProps = async ({}) => {
+  const data = await getServerPageGetProducts(undefined, {} as any)
+
   return {
-    props: {},
+    props: data.props,
+    revalidate: 60 * 60, // 1 hour
   }
 }
 
-export default withApollo(Enroll)
+export default withApollo(ssrGetProducts.withPage()(Enroll))
