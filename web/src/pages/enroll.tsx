@@ -2,7 +2,6 @@ import Head from 'next/head'
 import { CalendarIcon } from '@heroicons/react/solid'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
-import { GetStaticProps } from 'next'
 import {
   GetProductsQuery,
   useCreatePurchaseMutation,
@@ -88,7 +87,7 @@ function Enroll({ data }: EnrollProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({}) => {
+export const getStaticProps = async ({}) => {
   const data = await getServerPageGetProducts(undefined, {} as any)
 
   return {

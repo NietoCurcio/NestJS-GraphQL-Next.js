@@ -1,8 +1,9 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
 import Link from 'next/link'
 import { useUser } from '@auth0/nextjs-auth0'
+import { Modal } from './Modal'
 
 const navigation = [
   { name: 'Faça sua matrícula', href: '/enroll' },
@@ -13,6 +14,16 @@ const navigation = [
 
 export function Header() {
   const { user } = useUser()
+
+  const [isOpen, setIsOpen] = useState(false)
+
+  function handleOpenModal() {
+    setIsOpen(true)
+  }
+
+  function handleCloseModal() {
+    setIsOpen(false)
+  }
 
   return (
     <Popover as="header" className="relative">
@@ -50,6 +61,10 @@ export function Header() {
                   {item.name}
                 </a>
               ))}
+
+              <p onClick={handleOpenModal}>Modal</p>
+
+              <Modal handleCloseModal={handleCloseModal} isOpen={isOpen} />
             </div>
           </div>
 
@@ -68,11 +83,14 @@ export function Header() {
             </div>
           ) : (
             <div className="hidden md:flex md:items-center md:space-x-6">
-              <Link href="/api/auth/login">
-                <a className="text-base font-medium text-white hover:text-gray-300">
-                  Minha conta
-                </a>
-              </Link>
+              {/* <Link href="/api/auth/login"> */}
+              <a
+                onClick={handleOpenModal}
+                className="text-base font-medium text-white hover:text-gray-300"
+              >
+                Login
+              </a>
+              {/* </Link> */}
             </div>
           )}
         </nav>
