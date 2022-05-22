@@ -6,11 +6,11 @@ import {
   ClockIcon,
   DocumentTextIcon,
   SupportIcon,
-} from '@heroicons/react/solid'
-import Head from 'next/head'
-import { Footer } from '../components/Footer'
-import { Header } from '../components/Header'
-import { withApollo } from '../lib/withApollo'
+} from '@heroicons/react/solid';
+import Head from 'next/head';
+import { Footer } from '../components/Footer';
+import { Header } from '../components/Header';
+import { withApollo } from '../lib/withApollo';
 
 const advantages = [
   {
@@ -49,7 +49,7 @@ const advantages = [
       'Não tenha pressa em estudar, receba acesso vitalício aos conteúdos dos cursos para estudar quando quiser.',
     icon: ClockIcon,
   },
-]
+];
 const blogPosts = [
   {
     id: 1,
@@ -108,7 +108,7 @@ const blogPosts = [
     },
     readingLength: '11 min',
   },
-]
+];
 
 function Home() {
   return (
@@ -335,7 +335,7 @@ function Home() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default withApollo(Home)
+export default withApollo(Home);

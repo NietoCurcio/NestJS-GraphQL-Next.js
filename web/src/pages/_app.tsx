@@ -1,12 +1,12 @@
-import { UserProvider } from '@auth0/nextjs-auth0'
-import '../styles/global.css'
+import { AuthProvider } from '../contexts/AuthContext';
+import '../styles/global.css';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <UserProvider>
+    <AuthProvider>
       <Component {...pageProps} />
-    </UserProvider>
-  )
+    </AuthProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;

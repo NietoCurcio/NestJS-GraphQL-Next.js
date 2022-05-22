@@ -1,11 +1,13 @@
-import { withPageAuthRequired } from '@auth0/nextjs-auth0'
-import Head from 'next/head'
-import { CalendarIcon } from '@heroicons/react/solid'
-import { Header } from '../../components/Header'
-import { Footer } from '../../components/Footer'
-import { withApollo } from '../../lib/withApollo'
-import { useMe } from '../../graphql/generated/page'
-import Link from 'next/link'
+import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import Head from 'next/head';
+import { CalendarIcon } from '@heroicons/react/solid';
+import { Header } from '../../components/Header';
+import { Footer } from '../../components/Footer';
+import { withApollo } from '../../lib/withApollo';
+import { useMe } from '../../graphql/generated/page';
+import Link from 'next/link';
+import { parseCookies } from 'nookies';
+import { GetServerSideProps } from 'next';
 
 const applicants = [
   {
@@ -26,16 +28,16 @@ const applicants = [
     imageUrl:
       'https://images.unsplash.com/photo-1505840717430-882ce147ef2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
   },
-]
+];
 
 const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
   day: '2-digit',
   month: 'long',
   year: 'numeric',
-})
+});
 
 function Courses() {
-  const { data } = useMe()
+  const { data } = useMe();
 
   return (
     <>
@@ -119,11 +121,25 @@ function Courses() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export const getServerSideProps = withPageAuthRequired({
-  returnTo: '/',
-})
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const cookies = parseCookies(ctx);
+  const { 'cognito.accessToken': accessToken } = cookies;
 
-export default withApollo(Courses)
+  if (!accessToken) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
+
+export default withApollo(Courses);
