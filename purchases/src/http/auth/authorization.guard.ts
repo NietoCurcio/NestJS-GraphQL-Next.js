@@ -9,19 +9,25 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import jwt from 'express-jwt';
 import { expressJwtSecret } from 'jwks-rsa';
 import { promisify } from 'node:util';
-// import { CognitoJwtVerifier } from 'aws-jwt-verify'; // AWS Cognito
+import { CognitoJwtVerifier } from 'aws-jwt-verify'; // AWS Cognito
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
+  /*
+  Auth 0
   private AUTH0_AUDIENCE: string;
   private AUTH0_DOMAIN: string;
+  */
 
   constructor(private configService: ConfigService) {
+    /*
+    Auth 0
     this.AUTH0_AUDIENCE = this.configService.get('AUTH0_AUDIENCE') ?? '';
     this.AUTH0_DOMAIN = this.configService.get('AUTH0_DOMAIN') ?? '';
+    */
   }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  async canActivate(context: ExecutionContext) {
     /* 
       this is for REST architecture
       const httpContext = context.switchToHttp();
@@ -32,22 +38,26 @@ export class AuthorizationGuard implements CanActivate {
     const { req, res } = GqlExecutionContext.create(context).getContext();
 
     // AWS Cognito
-    /*
     const verifier = CognitoJwtVerifier.create({
       userPoolId: process.env.COGNITO_USERPOOLID,
-      tokenUse: 'id',
+      tokenUse: 'access',
       clientId: process.env.COGNITO_CLIENTID,
     });
 
-    const idToken = req.headers.authorization?.split(' ')[1];
+    const accessToken = req.headers.authorization?.split(' ')[1];
 
     try {
-      const payload = await verifier.verify(idToken);
-      console.log('Token is valid. Payload:', payload);
-    } catch {
+      const payload = await verifier.verify(accessToken);
+      // console.log('Token is valid. Payload:', payload);
+      req.user = payload;
+      return true;
+    } catch (err) {
       console.log('Token not valid!');
+      throw new UnauthorizedException(err);
     }
-    */
+
+    /*
+    Auth0
 
     const checkJWT = promisify(
       jwt({
@@ -69,5 +79,7 @@ export class AuthorizationGuard implements CanActivate {
     } catch (error) {
       throw new UnauthorizedException(error);
     }
+
+    */
   }
 }
