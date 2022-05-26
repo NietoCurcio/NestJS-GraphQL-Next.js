@@ -10,12 +10,19 @@ export function Modal({ handleCloseModal, isModalOpen }: ModalProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const { signIn, setLoading } = useContext(AuthContext);
+  const domainName = process.env.NEXT_PUBLIC_COGNITO_DOMAIN_NAME;
+  const region = process.env.NEXT_PUBLIC_REGION;
+  const clientId = process.env.NEXT_PUBLIC_CLIENTID;
+  const redirect_uri = 'http://localhost:3000/api/callback/';
+
+  const cognitoOAuthLink = `https://${domainName}.auth.${region}.amazoncognito.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}`;
+
+  const { signIn, setIsLoading } = useContext(AuthContext);
 
   async function handleLogin(event: FormEvent) {
     event.preventDefault();
 
-    setLoading(true);
+    setIsLoading(true);
 
     signIn({ username, password });
 
@@ -67,7 +74,7 @@ export function Modal({ handleCloseModal, isModalOpen }: ModalProps) {
                         value={username}
                       />
                     </div>
-                    <div className="mb-6">
+                    <div>
                       <label
                         className="block text-white text-sm font-bold mb-2"
                         htmlFor="password"
@@ -82,6 +89,14 @@ export function Modal({ handleCloseModal, isModalOpen }: ModalProps) {
                         onChange={(e) => setPassword(e.target.value)}
                         value={password}
                       />
+                    </div>
+                    <div className="text-white mb-4 mt-1">
+                      <a
+                        href={cognitoOAuthLink}
+                        onClick={() => setIsLoading(true)}
+                      >
+                        Oauth button
+                      </a>
                     </div>
                     <div className="flex items-center justify-between">
                       <button

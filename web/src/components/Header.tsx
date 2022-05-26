@@ -16,7 +16,7 @@ const navigation = [
 ];
 
 export function Header() {
-  const { isAuthenticated, signOut, loading } = useContext(AuthContext);
+  const { isAuthenticated, signOut, isLoading } = useContext(AuthContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -95,7 +95,7 @@ export function Header() {
                 onClick={handleOpenModal}
                 className="text-base font-medium text-white hover:text-gray-300"
               >
-                {loading ? (
+                {isLoading ? (
                   <div className="flex items-center">
                     Login
                     <svg

@@ -18,8 +18,8 @@ interface AuthContextData {
   signOut: () => void;
   isAuthenticated: boolean;
   accessToken: string | null;
-  loading: boolean;
-  setLoading: (state: boolean) => void;
+  isLoading: boolean;
+  setIsLoading: (state: boolean) => void;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -27,7 +27,7 @@ export const AuthContext = createContext({} as AuthContextData);
 export function AuthProvider({ children }: AuthProviderProps) {
   const [accessToken, setAccessToken] = useState(null);
   const isAuthenticated = !!accessToken;
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const { 'cognito.accessToken': token } = parseCookies();
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setCookie(undefined, 'cognito.accessToken', access);
       setAccessToken(access);
-      setLoading(false);
+      setIsLoading(false);
     } catch (err: unknown) {
       console.log(err);
     }
@@ -64,8 +64,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signOut,
         isAuthenticated,
         accessToken,
-        loading,
-        setLoading,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}
