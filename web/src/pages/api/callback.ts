@@ -21,19 +21,18 @@ export default async function handler(
       )}`
     );
   }
+  const domainName = process.env.NEXT_PUBLIC_COGNITO_DOMAIN_NAME;
+  const region = process.env.NEXT_PUBLIC_REGION;
 
-  const response = await fetch(
-    'https://my-domain-ignite-lab-01.auth.us-east-1.amazoncognito.com/oauth2/token',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      body: formBody.join('&'),
-    }
-  );
+  const url = `https://${domainName}.auth.${region}.amazoncognito.com/oauth2/token`;
 
-  ('cognito.accessToken');
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+    body: formBody.join('&'),
+  });
 
   const { access_token } = await response.json();
 

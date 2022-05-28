@@ -4,27 +4,34 @@ import {
   from,
   InMemoryCache,
   NormalizedCacheObject,
-} from '@apollo/client'
-import { GetServerSidePropsContext, NextPage } from 'next'
-import { ApolloProvider } from '@apollo/client'
+} from '@apollo/client';
+import { GetServerSidePropsContext, NextPage } from 'next';
+import { ApolloProvider } from '@apollo/client';
+import { parseCookies } from 'nookies';
 
-export type ApolloClientContext = GetServerSidePropsContext
+export type ApolloClientContext = GetServerSidePropsContext;
 
 export function getApolloClient(
   ctx?: ApolloClientContext,
   ssrCache?: NormalizedCacheObject
 ) {
-  const httpLink = createHttpLink({
-    uri: 'http://localhost:3000/api',
-    fetch,
-  })
+  const cookies = parseCookies(ctx);
+  const { 'cognito.accessToken': accessToken } = cookies;
 
-  const cache = new InMemoryCache().restore(ssrCache ?? {})
+  const httpLink = createHttpLink({
+    uri: 'http://localhost:3332/graphql',
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+    fetch,
+  });
+
+  const cache = new InMemoryCache().restore(ssrCache ?? {});
 
   return new ApolloClient({
     link: from([httpLink]),
     cache,
-  })
+  });
 }
 
 // HOC - High Order Component
@@ -35,6 +42,6 @@ export const withApollo = (Component: NextPage) => {
       <ApolloProvider client={getApolloClient(undefined, props.apolloState)}>
         <Component {...props} />
       </ApolloProvider>
-    )
-  }
-}
+    );
+  };
+};
